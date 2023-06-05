@@ -1,4 +1,4 @@
-import express from "exmpress";
+import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -25,11 +25,22 @@ app.use("/assets", express.static(path.join(__dirname, 'public/assets')));
 
 // FILE STORAGE
 
-const storade = multer.diskStorage({
+const storage = multer.diskStorage({
     destination: function(req, file, cb){
         cb(null, "public/assests");
     },
     filename: function (req, file, cb) {
         cb(null, file.originalname);
     }
-})
+});
+const upload = multer({storage});
+
+// MONGOOSE SETUP
+
+const PORT = process.env.port || 6001;
+mongoose.connect(process.env.MONGO_URL,{
+    useNewUrlParser : true,
+    useUnifiedTopology: true,
+}).then (() => {
+    app.listen(PORT , () => console.log(`Server Port: ${PORT}`));
+}).catch((error) => console.log(`${error} did not connect`))
